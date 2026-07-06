@@ -1,9 +1,11 @@
 import streamlit as st
 import os
-import subprocess
 import glob
 from google import genai
 from google.genai import types
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+from app.agent import root_agent
 
 # Load environment variables
 from dotenv import load_dotenv
@@ -34,25 +36,26 @@ if run_btn and uploaded_file is not None:
         
     st.session_state["dataset_path"] = file_path
     
-    # Construct command
-    cmd = ["uv", "run", "agents-cli", "run"]
-    prompt = f'"{file_path}"'
+    # Run the pipeline directly in Python via ADK Runner
+    prompt = file_path
     if target_variable:
-        prompt = f'"{file_path} --target {target_variable}"'
+        prompt = f"{file_path} --target {target_variable}"
         
-    cmd.append(prompt)
-    
-    # Run the pipeline
     with st.spinner("Analyzing data, testing models, and generating report... This may take a minute or two."):
-        # We use shell=True because the prompt has quotes
-        process = subprocess.run(" ".join(cmd), shell=True, capture_output=True, text=True)
-        
-        if process.returncode != 0:
-            st.error("Pipeline failed!")
-            st.code(process.stderr)
-        else:
+        try:
+            session_service = InMemorySessionService()
+            session = session_service.create_session_sync(user_id="streamlit_user", app_name="adsa")
+            runner = Runner(agent=root_agent, session_service=session_service, app_name="adsa")
+            message = types.Content(role="user", parts=[types.Part.from_text(text=prompt)])
+            
+            # Execute the workflow DAG directly in memory (no HTTP timeout!)
+            events = list(runner.run(new_message=message, user_id="streamlit_user", session_id=session.id))
+            
             st.success("Pipeline complete!")
             st.session_state["pipeline_run"] = True
+        except Exception as e:
+            st.error("Pipeline failed!")
+            st.exception(e)
 
 # 3. Display Report and Charts
 if st.session_state.get("pipeline_run", False):
