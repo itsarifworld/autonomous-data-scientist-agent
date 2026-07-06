@@ -22,7 +22,7 @@ def get_model_instance(model_name: str, task_type: str):
         
     is_class = task_type == "Classification"
     
-    if "logistic" in name: return LogisticRegression(max_iter=1000, random_state=42)
+    if "logistic" in name: return LogisticRegression(max_iter=5000, random_state=42)
     if "linear" in name: return LinearRegression()
     if "ridge" in name or "lasso" in name: return Ridge(random_state=42)
     if "decision tree" in name: 

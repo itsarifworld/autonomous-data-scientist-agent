@@ -16,7 +16,7 @@ def run_statistics(ctx: Context, node_input: Dict[str, Any]) -> Event:
     df = pd.read_csv(dataset_path) if dataset_path.endswith('.csv') else pd.read_parquet(dataset_path)
     
     numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
-    categorical_cols = df.select_dtypes(include=['object', 'category']).columns
+    categorical_cols = df.select_dtypes(include=['object', 'category', 'str']).columns
     
     test_results = []
     

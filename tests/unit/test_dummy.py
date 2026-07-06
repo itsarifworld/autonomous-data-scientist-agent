@@ -18,6 +18,20 @@ data processing, and other core components of your application.
 """
 
 
-def test_dummy() -> None:
-    """Placeholder - replace with real tests."""
-    assert 1 == 1
+from app.agent import app, root_agent
+from app.utils.schemas import DataMetadata, ModelRecommendation
+
+
+def test_app_configuration() -> None:
+    """Test that ADK app and root workflow are properly configured."""
+    assert app.name == "app"
+    assert root_agent.name == "adsa_pipeline"
+    assert len(root_agent.edges) == 12
+
+
+def test_schemas() -> None:
+    """Test data schemas and validation."""
+    meta = DataMetadata(rows=100, columns=10, memory_usage_mb=1.5, dtypes={"col1": "int64"})
+    assert meta.rows == 100
+    rec = ModelRecommendation(model_name="Random Forest", justification="Robust model")
+    assert rec.model_name == "Random Forest"
