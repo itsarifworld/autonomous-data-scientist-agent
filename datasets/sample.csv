@@ -1,0 +1,11 @@
+ID,Age,Income,Education,City,PurchaseAmount,YearsAsCustomer
+1,25,50000,Bachelors,New York,100,2
+2,35,,Masters,Los Angeles,250,5
+3,45,120000,PhD,Chicago,500,10
+4,22,30000,High School,New York,50,1
+5,,80000,Bachelors,Los Angeles,150,4
+6,38,90000,,Chicago,300,7
+7,50,150000,Masters,New York,600,15
+8,28,60000,Bachelors,Los Angeles,,3
+9,42,110000,Masters,Chicago,400,8
+10,,40000,High School,New York,80,2
